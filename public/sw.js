@@ -16,6 +16,24 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+self.addEventListener('push', e => {
+  const data = e.data?.json() ?? { title: 'Togetherly', body: 'New update', type: 'checkin' };
+  e.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      requireInteraction: data.type === 'sos',
+      tag: data.type === 'sos' ? 'sos' : 'checkin',
+    })
+  );
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow('/family'));
+});
+
 self.addEventListener('fetch', e => {
   // Network-first for API/Supabase calls; cache-first for app shell
   const url = new URL(e.request.url);

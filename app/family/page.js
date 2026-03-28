@@ -23,6 +23,7 @@ export default function FamilyPage() {
     setSession(sess);
     loadData(sess.familyCode);
     subscribeToUpdates(sess.familyCode);
+    subscribeToPush(sess.familyCode);
   }, [router]);
 
   const loadData = useCallback(async (code) => {
@@ -88,8 +89,34 @@ export default function FamilyPage() {
     showToast('Needs marked as done ✓', 'okay');
   }
 
-  function requestNotifications() {
-    Notification?.requestPermission();
+  async function subscribeToPush(familyCode) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') return;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const existing = await reg.pushManager.getSubscription();
+      const sub = existing || await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
+      });
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ familyCode, subscription: sub.toJSON() }),
+      });
+    } catch (e) {
+      console.warn('Push subscription failed:', e);
+    }
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const output = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; i++) output[i] = rawData.charCodeAt(i);
+    return output;
   }
 
   if (!session || !status) return <div className="loading-screen">Loading…</div>;
@@ -186,27 +213,6 @@ export default function FamilyPage() {
         ))}
       </div>
 
-      {/* Notification prompt */}
-      {typeof window !== 'undefined' && Notification?.permission === 'default' && (
-        <div style={{ padding: '16px', textAlign: 'center' }}>
-          <button
-            onClick={requestNotifications}
-            style={{
-              background: 'none',
-              border: '2px solid var(--border)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '12px 20px',
-              fontSize: '0.95rem',
-              fontWeight: 700,
-              color: 'var(--text-medium)',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            🔔 Enable SOS notifications
-          </button>
-        </div>
-      )}
 
       <button className="switch-view" onClick={() => router.push('/user')}>
         Switch to User View

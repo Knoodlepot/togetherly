@@ -57,6 +57,21 @@ export default function UserPage() {
       needs: extra.active_needs ?? null,
     });
 
+    // Fire push notification to family devices
+    const messages = {
+      sos:   { title: '🆘 SOS EMERGENCY', body: `${session.userName} needs emergency help RIGHT NOW!` },
+      okay:  { title: '✅ All Good',       body: `${session.userName} has checked in — they're okay.` },
+      help:  { title: '🙋 Needs Help',     body: `${session.userName} needs some help.` },
+      mood:  { title: '😊 Mood Update',    body: `${session.userName} has shared how they're feeling.` },
+      needs: { title: '🛒 Needs List',     body: `${session.userName} has updated their needs list.` },
+    };
+    const msg = messages[type] || { title: 'Togetherly', body: 'New update from ' + session.userName };
+    fetch('/api/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ familyCode, title: msg.title, body: msg.body, type }),
+    });
+
     setStatus(prev => ({ ...prev, ...familyUpdate }));
     setBusy(false);
   }
