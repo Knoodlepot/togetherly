@@ -122,6 +122,14 @@ export default function FamilyPage() {
   if (!session || !status) return <div className="loading-screen">Loading…</div>;
 
   const { user_name, last_checkin_type, last_checkin_at, current_mood, active_needs, sos_active } = status;
+
+  const inactivityLevel = (() => {
+    if (!last_checkin_at) return 'none';
+    const hours = (Date.now() - new Date(last_checkin_at).getTime()) / 3600000;
+    if (hours >= 24) return 'red';
+    if (hours >= 12) return 'amber';
+    return 'none';
+  })();
   const needs    = active_needs || [];
   const moodObj  = getMood(current_mood);
 
@@ -141,6 +149,19 @@ export default function FamilyPage() {
           >
             Handled
           </button>
+        </div>
+      )}
+
+      {/* Inactivity warning */}
+      {!sos_active && inactivityLevel !== 'none' && (
+        <div className={`inactivity-banner inactivity-${inactivityLevel}`}>
+          <span className="inactivity-icon">{inactivityLevel === 'red' ? '🔴' : '⚠️'}</span>
+          <span className="inactivity-text">
+            {inactivityLevel === 'red'
+              ? `No check-in for over a day — please check on ${user_name}`
+              : `No check-in for ${Math.floor((Date.now() - new Date(last_checkin_at).getTime()) / 3600000)} hours — have you heard from ${user_name}?`
+            }
+          </span>
         </div>
       )}
 

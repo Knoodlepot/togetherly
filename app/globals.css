@@ -311,6 +311,21 @@ html, body {
 }
 
 /* ===== FAMILY DASHBOARD ===== */
+.inactivity-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.inactivity-amber { background: var(--amber-light); color: #92400e; border-bottom: 3px solid var(--amber); }
+.inactivity-red   { background: var(--red-light);   color: #991b1b; border-bottom: 3px solid var(--red); }
+.inactivity-icon  { font-size: 1.6rem; flex-shrink: 0; }
+.inactivity-text  { flex: 1; }
+
 .sos-banner {
   background: var(--red);
   color: white;
