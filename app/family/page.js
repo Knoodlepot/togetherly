@@ -168,12 +168,10 @@ export default function FamilyPage() {
       {/* Header */}
       <div className="family-header">
         <h1>{user_name}&apos;s Status</h1>
-        <button
-          className="refresh-btn"
-          onClick={() => loadData(session.familyCode)}
-        >
-          ↻ Refresh
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button className="refresh-btn" onClick={() => loadData(session.familyCode)}>↻ Refresh</button>
+          <button className="settings-btn" onClick={() => router.push('/settings')} aria-label="Settings">⚙</button>
+        </div>
       </div>
 
       <div className="status-cards">

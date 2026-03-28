@@ -13,8 +13,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-const INACTIVITY_HOURS = 24;
-
 export async function GET(req) {
   // Vercel calls cron routes via GET with the secret in the Authorization header
   const authHeader = req.headers.get('authorization');
@@ -22,21 +20,34 @@ export async function GET(req) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Find families inactive for 24h that haven't been notified yet for this period
-  const threshold = new Date(Date.now() - INACTIVITY_HOURS * 3600000).toISOString();
-
+  // Fetch all families that have checked in at least once
   const { data: families, error } = await supabase
     .from('families')
-    .select('code, user_name, last_checkin_at, inactivity_notified_at')
-    .lt('last_checkin_at', threshold)
-    .or('inactivity_notified_at.is.null,inactivity_notified_at.lt.last_checkin_at');
+    .select('code, user_name, last_checkin_at, inactivity_notified_at, inactivity_hours')
+    .not('last_checkin_at', 'is', null);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!families || families.length === 0) return NextResponse.json({ ok: true, notified: 0 });
 
+  // Filter to families that are overdue and haven't been notified for this period
+  const now = Date.now();
+  const overdue = families.filter(f => {
+    const hours = f.inactivity_hours || 24;
+    const lastCheckin = new Date(f.last_checkin_at).getTime();
+    if (now - lastCheckin < hours * 3600000) return false; // still active
+    if (f.inactivity_notified_at) {
+      const notifiedAt = new Date(f.inactivity_notified_at).getTime();
+      if (notifiedAt > lastCheckin) return false; // already notified for this period
+    }
+    return true;
+  });
+
+  if (overdue.length === 0) return NextResponse.json({ ok: true, notified: 0 });
+
   let notified = 0;
 
-  for (const family of families) {
+  for (const family of overdue) {
+    const hours = family.inactivity_hours || 24;
     const { data: subs } = await supabase
       .from('push_subscriptions')
       .select('endpoint, subscription')
@@ -46,7 +57,7 @@ export async function GET(req) {
 
     const payload = JSON.stringify({
       title: `👋 Have you heard from ${family.user_name}?`,
-      body: `${family.user_name} hasn't checked in for over ${INACTIVITY_HOURS} hours. It might be worth giving them a call.`,
+      body: `${family.user_name} hasn't checked in for over ${hours} hours. It might be worth giving them a call.`,
       type: 'inactivity',
     });
 

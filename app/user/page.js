@@ -132,7 +132,10 @@ export default function UserPage() {
   return (
     <div className="screen">
       <div className="user-header">
-        <h1>Hello, {session.userName}!</h1>
+        <div className="header-top">
+          <h1>Hello, {session.userName}!</h1>
+          <button className="settings-btn" onClick={() => router.push('/settings')} aria-label="Settings">⚙</button>
+        </div>
         <p className="user-subtitle">How are you doing today?</p>
       </div>
 

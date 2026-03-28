@@ -459,6 +459,111 @@ html, body {
 
 .empty-state { text-align: center; color: var(--text-medium); padding: 28px; font-size: 1.05rem; }
 
+/* ===== SETTINGS ===== */
+.header-top { display: flex; align-items: center; justify-content: space-between; }
+
+.settings-btn {
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
+  color: white;
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-screen { background: var(--bg); }
+
+.settings-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+
+.settings-section {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.settings-label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-medium); }
+
+.settings-row { display: flex; gap: 10px; align-items: stretch; }
+
+.settings-input {
+  flex: 1;
+  font-size: 1.2rem;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-dark);
+  font-family: inherit;
+  outline: none;
+}
+.settings-input:focus { border-color: var(--blue); }
+
+.settings-save-btn {
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+.settings-save-btn:disabled { opacity: 0.4; cursor: default; }
+
+.threshold-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.threshold-btn {
+  padding: 16px 10px;
+  border: 3px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  cursor: pointer;
+  font-family: inherit;
+  touch-action: manipulation;
+  transition: border-color 0.15s, background 0.15s;
+}
+.threshold-btn.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+
+.settings-code {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--text-dark);
+  font-family: monospace;
+}
+
+.settings-hint { font-size: 0.92rem; color: var(--text-medium); line-height: 1.5; }
+
+.settings-danger { border: 2px solid var(--red-light); }
+
+.settings-leave-btn {
+  background: none;
+  border: 2px solid var(--red);
+  color: var(--red);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  touch-action: manipulation;
+  align-self: flex-start;
+}
+
 /* ===== SHARED ===== */
 .switch-view {
   display: block;
