@@ -13,6 +13,7 @@ export default function SetupPage() {
   const [role, setRole]         = useState(null);
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
+  const [consent, setConsent]   = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -34,6 +35,7 @@ export default function SetupPage() {
     if (!name.trim())            return setError('Please enter a name.');
     if (!role)                   return setError('Please choose who you are.');
     if (code.trim().length < 6)  return setError('Please enter or generate a 6-letter code.');
+    if (!consent)                return setError('Please agree to the privacy notice to continue.');
 
     setLoading(true);
     setError('');
@@ -151,6 +153,19 @@ export default function SetupPage() {
             </p>
           </div>
         )}
+
+        <label className="consent-label">
+          <input
+            type="checkbox"
+            className="consent-checkbox"
+            checked={consent}
+            onChange={e => setConsent(e.target.checked)}
+          />
+          <span>
+            I agree that wellbeing information (check-ins, mood, and requests) will be shared with connected family members. Check-in history is deleted after 90 days.{' '}
+            <a href="/privacy" target="_blank" className="consent-link">Privacy Notice</a>
+          </span>
+        </label>
 
         <button
           className="btn-start"

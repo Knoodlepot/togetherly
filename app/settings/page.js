@@ -159,6 +159,12 @@ export default function SettingsPage() {
           <p className="settings-hint">Removes the app from this device only. Other devices keep their access.</p>
         </div>
 
+        {/* Privacy notice */}
+        <div className="settings-section">
+          <div className="settings-label">Legal</div>
+          <a href="/privacy" className="settings-privacy-link">Read our Privacy Notice →</a>
+        </div>
+
         {/* Delete all data */}
         <div className="settings-section settings-danger">
           <button className="settings-delete-btn" onClick={deleteAllData}>

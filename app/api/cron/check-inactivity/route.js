@@ -82,5 +82,9 @@ export async function GET(req) {
     notified++;
   }
 
+  // Delete check-in history older than 90 days (storage limitation — UK GDPR)
+  const cutoff = new Date(Date.now() - 90 * 24 * 3600000).toISOString();
+  await supabase.from('checkins').delete().lt('created_at', cutoff);
+
   return NextResponse.json({ ok: true, notified });
 }
