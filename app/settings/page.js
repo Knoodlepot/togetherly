@@ -73,6 +73,22 @@ export default function SettingsPage() {
     router.replace('/');
   }
 
+  async function deleteAllData() {
+    const confirmation = window.prompt(
+      'This will permanently delete ALL data for this family — check-in history, settings, and everything stored.\n\nThis cannot be undone.\n\nType DELETE to confirm.'
+    );
+    if (confirmation !== 'DELETE') return;
+
+    await Promise.all([
+      supabase.from('checkins').delete().eq('family_code', session.familyCode),
+      supabase.from('push_subscriptions').delete().eq('family_code', session.familyCode),
+    ]);
+    await supabase.from('families').delete().eq('code', session.familyCode);
+
+    localStorage.removeItem('togetherly_session');
+    router.replace('/');
+  }
+
   if (!session) return <div className="loading-screen">Loading…</div>;
 
   const returnPath = session.userRole === 'family' ? '/family' : '/user';
@@ -141,6 +157,14 @@ export default function SettingsPage() {
             Leave this family
           </button>
           <p className="settings-hint">Removes the app from this device only. Other devices keep their access.</p>
+        </div>
+
+        {/* Delete all data */}
+        <div className="settings-section settings-danger">
+          <button className="settings-delete-btn" onClick={deleteAllData}>
+            Delete all my data
+          </button>
+          <p className="settings-hint">Permanently deletes all check-in history, settings, and stored data for this family from our servers. Cannot be undone.</p>
         </div>
 
       </div>

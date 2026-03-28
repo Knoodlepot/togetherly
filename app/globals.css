@@ -564,6 +564,20 @@ html, body {
   align-self: flex-start;
 }
 
+.settings-delete-btn {
+  background: var(--red);
+  border: none;
+  color: white;
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  touch-action: manipulation;
+  align-self: flex-start;
+}
+
 /* ===== SHARED ===== */
 .switch-view {
   display: block;
